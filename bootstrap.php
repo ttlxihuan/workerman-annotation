@@ -21,7 +21,7 @@ defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DI
 
     \WorkermanAnnotation\Environment::load($env_name ?: 'production');
 
-    $logDir = __DIR__ . '/logs';
+    $logDir = BASE_PATH . '/logs';
     if (!file_exists($logDir)) {
         mkdir($logDir);
     }
