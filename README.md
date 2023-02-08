@@ -12,7 +12,7 @@ Installation
 ------------
 ### 使用composer安装（推荐）
 ```shell
-composer require ttlphp/workerman-annotation dev-master
+composer require ttlphp/workerman-annotation dev-main
 ```
 
 ### 使用GIT安装

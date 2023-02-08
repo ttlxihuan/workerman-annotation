@@ -21,7 +21,7 @@
             "WorkermanAnnotation\\": "src/"
         },
         "files": [
-            "src/helpers.php"
+            "functions.php"
         ]
     },
     "extra": {
