@@ -132,6 +132,10 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 
 ```php
 // 示例
+/**
+ * @DefineUse(function=true)
+ * @DefineParam(name="name", type="string", default="")
+ */
 class TextAnnotation implements \WorkermanAnnotation\Annotations\iAnnotation {
 
     /**
