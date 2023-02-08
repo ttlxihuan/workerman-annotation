@@ -8,10 +8,10 @@
 
 namespace WorkermanAnnotation\Annotations;
 
-use WorkermanAnnotation\Annotation;
 use GatewayWorker\Lib\Gateway;
 use GatewayWorker\Lib\Context;
 use GatewayWorker\BusinessWorker;
+use WorkermanAnnotation\AnnotationHandle;
 use WorkermanAnnotation\BusinessException;
 
 /**
@@ -51,7 +51,7 @@ class WebsocketRouter implements iAnnotation {
      * 创建路由处理器
      * @param Annotation $parse
      */
-    protected function create(Annotation $parse) {
+    protected function create(AnnotationHandle $parse) {
         $ping = workerConfig('server.gateway.ping.data');
         $parse->addCall(function (array $params)use ($parse, $ping) {
             $message = $params[0];

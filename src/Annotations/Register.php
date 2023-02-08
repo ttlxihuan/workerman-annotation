@@ -19,9 +19,7 @@ class Register implements iAnnotation {
     public function make(array $params, array $input): array {
         $annotations = [];
         foreach ($params as $item) {
-            if (strpos($item['class'], '\\') === false && class_exists($class = __NAMESPACE__ . '\\' . $item['class'])) {
-                $class = __NAMESPACE__ . '\\' . $item['class'];
-            } else {
+            if (strpos($item['class'], '\\') !== false || !class_exists($class = __NAMESPACE__ . '\\' . $item['class'])) {
                 $class = ltrim($item['class'], '\\');
             }
             $name = strpos($class, '\\') === false ? $class : substr(strrchr($class, '\\'), 1);
@@ -29,7 +27,7 @@ class Register implements iAnnotation {
                 throw new Exception("注册注解名 $name 已经占用");
             }
             $annotations[$name] = $input['parse']->parseDefine($class);
-            $annotations[$name]['instance'] = new $item['class']();
+            $annotations[$name]['instance'] = new $class();
         }
         return $annotations;
     }

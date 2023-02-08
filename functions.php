@@ -20,12 +20,11 @@ function serverRun($basePath = null) {
     if (strpos(strtolower(PHP_OS), 'win') === 0) {
         global $argv;
         foreach (glob(__DIR__ . '/server/*.php') as $server) {
-            if (strpos($server, 'register.php') !== false) {
-                require_once $server;
-            } else {
+            if (strpos($server, 'register.php') === false) {
                 $argv[] = $server;
             }
         }
+        require_once $server;
     } else {
         // 必要扩展
         if (!extension_loaded('pcntl')) {

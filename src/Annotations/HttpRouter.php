@@ -9,13 +9,13 @@
 namespace WorkermanAnnotation\Annotations;
 
 use WorkermanAnnotation\Event;
-use WorkermanAnnotation\Annotation;
 use Workerman\Protocols\Http;
 use GatewayWorker\Lib\Context;
 use GatewayWorker\Lib\Gateway;
-use WorkermanAnnotation\BusinessException;
 use Workerman\Protocols\Http\Response;
 use Workerman\Connection\TcpConnection;
+use WorkermanAnnotation\AnnotationHandle;
+use WorkermanAnnotation\BusinessException;
 use WorkermanAnnotation\Protocols\Http\Request;
 
 /**
@@ -129,7 +129,7 @@ class HttpRouter implements iAnnotation {
      * 添加处理器
      * @param Annotation $parse
      */
-    protected function addCall(Annotation $parse) {
+    protected function addCall(AnnotationHandle $parse) {
         static $set = false;
         if ($set) {
             return;
