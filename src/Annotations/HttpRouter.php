@@ -34,7 +34,7 @@ class HttpRouter implements iAnnotation {
      */
     public function __construct() {
         Http::requestClass(Request::class);
-        $this->loadMimeTypes(workerConfig('server.mime', __DIR__ . '../../mime.types'));
+        $this->loadMimeTypes(workerConfig('server.mime', __DIR__ . '/../../mime.types'));
     }
 
     /**

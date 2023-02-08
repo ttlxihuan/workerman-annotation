@@ -19,12 +19,10 @@ function serverRun($basePath = null) {
     }
     if (strpos(strtolower(PHP_OS), 'win') === 0) {
         global $argv;
+        unset($argv[0]);
         foreach (glob(__DIR__ . '/server/*.php') as $server) {
-            if (strpos($server, 'register.php') === false) {
-                $argv[] = $server;
-            }
+            $argv[] = $server;
         }
-        require_once $server;
     } else {
         // 必要扩展
         if (!extension_loaded('pcntl')) {
@@ -41,9 +39,9 @@ function serverRun($basePath = null) {
         foreach (glob(__DIR__ . '/server/*.php') as $server) {
             require_once $server;
         }
-        // 运行所有服务
-        Worker::runAll();
     }
+    // 运行所有服务
+    Worker::runAll();
 }
 
 /**
