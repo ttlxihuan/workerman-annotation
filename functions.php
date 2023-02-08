@@ -53,7 +53,7 @@ function serverRun($basePath = null) {
  * @param mixed $default
  * @return mixed
  */
-function env(string $key, $default = null) {
+function workerEnv(string $key, $default = null) {
     return \WorkermanAnnotation\Environment::get($key, $default);
 }
 
@@ -63,7 +63,7 @@ function env(string $key, $default = null) {
  * @param mixed $default
  * @return mixed
  */
-function config(string $key = null, $default = null) {
+function workerworkerConfig(string $key = null, $default = null) {
     return WorkermanAnnotation\Config::get($key, $default);
 }
 

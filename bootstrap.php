@@ -7,11 +7,11 @@
 // 自动加载类
 require_once __DIR__ . '/../../autoload.php';
 
-defined('BASE_PATH') || define('BASE_PATH', env('BASE_PATH', realpath(__DIR__ . '/../../../')));
+defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DIR__ . '/../../../')));
 
 (function() {
     // 环境变量加载
-    $env_name = env('APP_ENV', consoleArgv('env', 'production'));
+    $env_name = workerEnv('APP_ENV', consoleArgv('env', 'production'));
 
     // 分布式处理，需要配置多个环境变量文件，以适应不同和节点启动
     $node = consoleArgv('node');

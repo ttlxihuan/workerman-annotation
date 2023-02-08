@@ -26,7 +26,7 @@ class UseWmiddleware implements iAnnotation {
         if (static::$annotation) {
             return;
         }
-        $config = config('annotation.middleware');
+        $config = workerConfig('annotation.middleware');
         if (is_array($config)) {
             static::$annotation = new AnnotationHandle(...$config);
         } else {

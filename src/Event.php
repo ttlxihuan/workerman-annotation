@@ -26,7 +26,7 @@ class Event {
      */
     public static function init() {
         // 控制器加载
-        $config = config('annotation.controller');
+        $config = workerConfig('annotation.controller');
         if (is_array($config)) {
             static::$controllers = new AnnotationHandle(...$config);
         } else {
@@ -45,7 +45,7 @@ class Event {
         static::$businessWorker = $businessWorker;
         static::$controllers->callIndex('bind-call', 'start', $businessWorker->id);
         // 全局定时器启动
-        $config = config('annotation.timer');
+        $config = workerConfig('annotation.timer');
         if (is_array($config)) {
             new AnnotationHandle(...$config);
         } else {

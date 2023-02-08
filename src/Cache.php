@@ -34,10 +34,10 @@ class Cache {
      */
     public static function connection(string $name = null) {
         if (is_null($name)) {
-            $name = config('cache.default');
+            $name = workerConfig('cache.default');
         }
         if (empty(static::$connections[$name])) {
-            $options = config("cache.stores.$name");
+            $options = workerConfig("cache.stores.$name");
             if (empty(static::$makes[$options['driver']])) {
                 throw new \Exception("缓存连接 {$name} 未正确配置连接处理器");
             }

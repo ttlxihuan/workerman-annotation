@@ -52,7 +52,7 @@ class WebsocketRouter implements iAnnotation {
      * @param Annotation $parse
      */
     protected function create(Annotation $parse) {
-        $ping = config('server.gateway.ping.data');
+        $ping = workerConfig('server.gateway.ping.data');
         $parse->addCall(function (array $params)use ($parse, $ping) {
             $message = $params[0];
             if ($message === $ping) {
