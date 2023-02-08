@@ -62,6 +62,7 @@ serverRun();
 内置固定注解处理器，注解处理类专用注解，用来指定为注解处理类可使用位置
 * function  在方法上使用，默认否
 * class     在类上使用，默认否
+
 #### @DefineParam(name=string, type=string, default=mixed)
 内置固定注解处理器，注解处理类专用注解，用来指定注解处理类参数，多个参数需要使用多次此注解。
 * name      参数名
@@ -74,7 +75,7 @@ serverRun();
 
 #### @HttpRouter(path=string)
 HTTP请求路由处理注册，指定后就可以在服务处理事件时调用路由，完成请求操作。如果是静态文件需要存放在 public/ 目录下。
-* path      路由前缀
+* path      路由前缀，默认：/
 
 #### @HttpMethod(type=string, name=string)
 HTTP请求方法路由注册，指定后此方法就可以通过路由调用。
@@ -83,7 +84,7 @@ HTTP请求方法路由注册，指定后此方法就可以通过路由调用。
 
 #### @WebsocketRouter(path=string, route=string)
 WebSocket请求路由处理注册，指定后就可以在服务处理事件时调用路由，完成请求操作。内置xml、json两种数据通信，会自动进行匹配，默认json。
-* path      路由前缀
+* path      路由前缀，默认：空
 * route     路由键名，从通信数据里提取，响应时会自动增加，默认：type
 
 #### @WebsocketMethod(name=string)

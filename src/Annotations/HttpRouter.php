@@ -20,7 +20,7 @@ use WorkermanAnnotation\Protocols\Http\Request;
 
 /**
  * @DefineUse(class=true)
- * @DefineParam(name="path", type="string", default="") 指定路由前段路径
+ * @DefineParam(name="path", type="string", default="/") 指定路由前段路径
  */
 class HttpRouter implements iAnnotation {
 

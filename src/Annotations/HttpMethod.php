@@ -30,12 +30,8 @@ class HttpMethod implements iAnnotation {
         $name = $input['ref']->getName();
         foreach ($input['indexs']['http'] ?? [''] as $before) {
             foreach ($params as $param) {
-                if (empty($param['type'])) {
-                    $indexs[] = $before . ($param['name'] ?: $name);
-                    continue;
-                }
                 foreach (explode(',', $param['type']) as $type) {
-                    $indexs[] = strtolower(trim($param['type'])) . $before . $param['name'];
+                    $indexs[] = strtoupper(trim($param['type'])) . $before . ($param['name'] ?: $name);
                 }
             }
         }
