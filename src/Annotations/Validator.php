@@ -27,18 +27,17 @@ class Validator implements iAnnotation {
      */
     public function __construct() {
         if (empty(static::$handle)) {
-            static::$handle = function(array $data, array $rules) {
+            static::addHandle(function (array $data, array $rules) {
                 ValidatorRun::adopt($data, $rules);
-            };
+            });
         }
     }
 
     /**
      * 设置缓存处理器
-     * @param Closure $set
-     * @param Closure $get
+     * @param Closure $validator
      */
-    public static function addHandle(Closure $validator) {
+    public static function addHandle(\Closure $validator) {
         static::$handle = $validator;
     }
 
@@ -50,8 +49,8 @@ class Validator implements iAnnotation {
      */
     public function make(array $params, array $input): array {
         return [
-            function(array &$call_params, \Closure $next)use($params) {
-                static::$handle($call_params[0] ?? [], $params);
+            function (array &$call_params, \Closure $next)use ($params) {
+                call_user_func(static::$handle, $call_params[0] ?? [], $params);
                 return $next();
             }
         ];
