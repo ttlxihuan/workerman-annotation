@@ -1,0 +1,32 @@
+{
+    "name": "ttlphp/workerman-annotation",
+    "type": "library",
+    "description": "基于GatewayWorker注解处理，通过注解解析绑定各模块调用，并且提供HTTP协议支持。",
+    "keywords": ["workerman", "workerman-annotation", "gateway-worker"],
+    "homepage": "https://github.com/ttlxihuan/workerman-annotation",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ttl",
+            "email": "ttlxihuan@163.com",
+            "role": "PHP开发"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "workerman/gateway-worker": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "WorkermanAnnotation\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
