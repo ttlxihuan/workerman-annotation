@@ -63,7 +63,7 @@ function workerEnv(string $key, $default = null) {
  * @param mixed $default
  * @return mixed
  */
-function workerworkerConfig(string $key = null, $default = null) {
+function workerConfig(string $key = null, $default = null) {
     return WorkermanAnnotation\Config::get($key, $default);
 }
 
