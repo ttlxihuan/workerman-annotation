@@ -473,6 +473,22 @@ class AnnotationHandle {
     }
 
     /**
+     * 通过多个可选索引进行调用，直到某个索引存在则不再向下调用。
+     * @param array $indexs
+     * @param array $params
+     * @return mixed
+     */
+    public function callTillIndexs(array $indexs, ...$params) {
+        foreach ($indexs as $name => $items) {
+            foreach (is_array($items) ? $items : [$items] as $index) {
+                if ($this->hasCallIndex($name, $index)) {
+                    return $this->callIndex($name, $index, ...$params);
+                }
+            }
+        }
+    }
+
+    /**
      * 判断是否存在调用
      * @param string $name
      * @return bool

@@ -79,7 +79,7 @@ HTTP请求路由处理注册，指定后就可以在服务处理事件时调用�
 
 #### @HttpMethod(type=string, name=string)
 HTTP请求方法路由注册，指定后此方法就可以通过路由调用。
-* type      请求类型，不指定为所有类型均可路由，多个使用逗号分开，不限制类型名（允许自定义），常用有：GET、POST、HEAD、DELETE、PUT、OPTION
+* type      请求类型，不指定为所有类型均可路由，多个使用逗号分开，可选：GET、POST、OPTIONS、HEAD、DELETE、PUT、PATCH
 * name      路由后缀，不指定为方法名
 
 #### @WebsocketRouter(path=string, route=string)
@@ -108,13 +108,14 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 缓存函数返回值专用注解，此注解会截取函数返回值并进行缓存，下次调用时在缓存有效期内直接返回缓存值而不需要调用函数。
 * timeout   指定缓存保存时长（秒），默认600秒。
 * name      指定缓存处理名，用来选择不同的缓存，不指定则为配置默认连接。
+* empty     是否缓存空值（以empty语句结果为准），默认不缓存空值。
 
 #### @Transaction(name=string)
 事务注解，可以函数调用时自动开启事务，当有报错时事务回滚否则事务提交。
 * name      指定事务名，用来选择不同的数据库，不指定则为配置默认连接。
 
 #### @Timer(id=int, interval=int, persistent=bool)
-定时器注解，多进程时可以绑定指定进程号上运行，方便管理各定时器。
+定时器注解，多进程时可以绑定指定进程号上运行，方便管理各定时器，如果只有一个进程运行时进程号无效。
 * id        业务服务进程ID，<0时绑定在所有业务服务进程上，默认：0
 * interval  定时调用间隔时长，默认：1
 * persistent 是否循环定时器，默认：true

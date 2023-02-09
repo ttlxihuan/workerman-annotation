@@ -30,6 +30,11 @@ class HttpRouter implements iAnnotation {
     protected $mimeTypes = [];
 
     /**
+     * @var Request 当前请求载体
+     */
+    public static $request;
+
+    /**
      * 初始化处理
      */
     public function __construct() {
@@ -133,31 +138,33 @@ class HttpRouter implements iAnnotation {
         static $set = false;
         if ($set) {
             return;
+        } else {
+            $set = true;
         }
-        $set = true;
         $parse->addCall(function (array $params)use ($parse) {
             $connection = $this->getTcpConnection();
-            $request = Http::decode($params[0], $connection);
+            static::$request = $request = Http::decode($params[0], $connection);
             try {
                 // 静态文件处理
                 $result = $this->requestStatic($request);
                 if (is_null($result)) {
-                    $result = $parse->callIndex('http-router', $request->method() . $request->path(), $request);
-                    if (is_null($result)) {
-                        $result = $parse->callIndex('http-router', $request->path(), $request);
-                        if (is_null($result)) {
-                            $result = $parse->callIndex('bind-call', 'http', $request);
-                        }
-                    }
+                    $result = $parse->callTillIndexs([
+                        'http-router' => [
+                            $request->method() . $request->path(),
+                            $request->path()
+                        ],
+                        'bind-call' => 'http'
+                            ], $request);
                 }
-            } catch (BusinessException $err) {
-                $result = $parse->callIndex('bind-call', 'http', $request);
             } catch (\Exception $err) {
                 $result = $parse->callIndex('bind-call', 'http', $request);
-                BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
+                if (!$err instanceof BusinessException) {
+                    BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
+                }
             }
+            static::$request = null;
             if (is_null($result)) {
-                return;
+                $result = '';
             }
             if (!$result instanceof Response) {
                 $result = new Response(200, [], $result);

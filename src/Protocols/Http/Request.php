@@ -14,13 +14,7 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      * @return bool
      */
     public function offsetExists($offset): bool {
-        if (isset($this->_data['get'][$offset])) {
-            return true;
-        }
-        if (in_array($this->method(), ['POST', 'PUT'], true)) {
-            return isset($this->_data['post'][$offset]) || isset($this->_data['files'][$offset]);
-        }
-        return false;
+        return $this[$offset] !== null;
     }
 
     /**
@@ -30,9 +24,9 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      */
     public function offsetGet($offset) {
         if (in_array($this->method(), ['POST', 'PUT'], true)) {
-            return $this->_data['post'][$offset] ?? $this->_data['files'][$offset] ?? $this->_data['get'][$offset];
+            return $this->post($offset) ?? $this->file($offset) ?? $this->get($offset);
         }
-        return $this->_data['get'][$offset] ?? null;
+        return $this->get($offset);
     }
 
     /**
@@ -43,9 +37,12 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      */
     public function offsetSet($offset, $value): void {
         if (in_array($this->method(), ['POST', 'PUT'], true)) {
+            $this->post();
             $this->_data['post'][$offset] = $value;
+        } else {
+            $this->get();
+            $this->_data['get'][$offset] = $value;
         }
-        $this->_data['get'][$offset] = $value;
     }
 
     /**
@@ -54,8 +51,8 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      * @return void
      */
     public function offsetUnset($offset): void {
-        if (in_array($this->method(), ['POST', 'PUT'], true) && isset($this->_data['post'][$offset])) {
-            unset($this->_data['post'][$offset]);
+        if (in_array($this->method(), ['POST', 'PUT'], true) && isset($this[$offset])) {
+            unset($this->_data['post'][$offset], $this->_data['files'][$offset]);
         } else {
             unset($this->_data['get'][$offset]);
         }

@@ -27,7 +27,7 @@ class Timer implements iAnnotation {
         $parse = $input['parse'];
         $method = $parse->getRefName($input['ref']);
         foreach ($params as $param) {
-            if ($param['interval'] > 0 && $param['id'] != Event::$businessWorker->id) {
+            if ($param['interval'] <= 0 || (Event::$businessWorker->count > 1 && $param['id'] != Event::$businessWorker->id)) {
                 continue;
             }
             TimerRun::add($param['interval'], function()use($parse, $method) {

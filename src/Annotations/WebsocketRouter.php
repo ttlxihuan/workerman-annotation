@@ -67,19 +67,19 @@ class WebsocketRouter implements iAnnotation {
             try {
                 foreach ($this->routes as $path => $route) {
                     if (isset($data[$route]) && (empty($path) || strpos($data[$route], $path) === 0)) {
-                        $result = $parse->callIndex('websocket-router', $data[$route], $data);
-                        if (is_null($result)) {
-                            $result = $parse->callIndex('bind-call', 'websocket', $data);
-                        }
+                        $result = $parse->callTillIndexs([
+                            'websocket-router' => $data[$route],
+                            'bind-call' => 'websocket',
+                                ], $data);
                         goto RETURN_RESULT;
                     }
                 }
                 $result = $parse->callIndex('bind-call', 'websocket', $data, new BusinessException('找不到路由'));
-            } catch (BusinessException $err) {
-                $result = $parse->callIndex('bind-call', 'websocket', $data, $err);
             } catch (\Exception $err) {
                 $result = $parse->callIndex('bind-call', 'websocket', $data, $err);
-                BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
+                if (!$err instanceof BusinessException) {
+                    BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
+                }
             }
             RETURN_RESULT:
             if (is_array($result) || $result instanceof \ArrayAccess) {

@@ -9,9 +9,10 @@ namespace WorkermanAnnotation\Annotations;
 use Closure;
 
 /**
- * @DefineUse(function=true)
- * @DefineParam(name="timeout", type="int", default="600") 指定缓存保存时长（秒）
+ * @DefineUse(function=true, class=true)
+ * @DefineParam(name="timeout", type="int", default=600) 指定缓存保存时长（秒）
  * @DefineParam(name="name", type="string", default="") 指定缓存保存配置名，不指定则为默认
+ * @DefineParam(name="empty", type="bool", default=false) 是否缓存空值，空值以empty语句结果为准
  */
 class Cache implements iAnnotation {
 
@@ -36,23 +37,22 @@ class Cache implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
-        $timeout = 600;
-        $name = null;
-        foreach ($params as $param) {
-            $timeout = $param['timeout'];
-            $name = $param['name'];
-        }
         $method = $input['parse']->getRefName($input['ref']);
         return [
-            function(array $params, Closure $next) use($timeout, $method, $name) {
+            function(array $call_params, Closure $next) use($params, $method) {
                 if (count(static::$handles)) {
-                    $key = $method . md5(serialize($params));
-                    $data = static::$handles['get']($key, $name);
-                    if (is_null($data) || $data === false) {
-                        $result = $next();
-                        static::$handles['set']($key, serialize($result), $timeout, $name);
-                    } else {
-                        $result = unserialize($data);
+                    $key = $method . md5(serialize($call_params));
+                    foreach ($params as $param) {
+                        $data = static::$handles['get']($key, $param['name']);
+                        if ($data !== null && $data !== false) {
+                            return unserialize($data);
+                        }
+                    }
+                    $result = $next();
+                    foreach ($params as $param) {
+                        if (!empty($result) || $param['empty']) {
+                            static::$handles['set']($key, serialize($result), $param['timeout'], $param['name']);
+                        }
                     }
                     return $result;
                 }

@@ -61,6 +61,9 @@ class Validator {
         'confirmed' => [
             '*' => '{title}必需与{target}相同',
         ],
+        'file' => [
+            '*' => '{title}必需上传文件',
+        ]
     ];
 
     /**
@@ -293,6 +296,18 @@ class Validator {
             return;
         }
         return ['values' => implode(',', $options)];
+    }
+
+    /**
+     * 验证是否为上传文件
+     * @param mixed $value
+     * @return array|void
+     */
+    public static function checkFile($value) {
+        if (is_null($value) && isset($value['tmp_name']) && file_exists($value['tmp_name'])) {
+            return;
+        }
+        return [];
     }
 
     /**

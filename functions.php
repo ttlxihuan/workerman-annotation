@@ -5,6 +5,9 @@
  */
 
 use Workerman\Worker;
+use WorkermanAnnotation\Config;
+use WorkermanAnnotation\Environment;
+use WorkermanAnnotation\Annotations\HttpRouter;
 
 /**
  * 启动服务
@@ -15,13 +18,14 @@ use Workerman\Worker;
 function serverRun($basePath = null) {
     ini_set('display_errors', 'on');
     if ($basePath) {
-        \WorkermanAnnotation\Environment::set('BASE_PATH', $basePath);
+        Environment::set('BASE_PATH', $basePath);
     }
     if (strpos(strtolower(PHP_OS), 'win') === 0) {
         global $argv;
         unset($argv[0]);
-        foreach (glob(__DIR__ . '/server/*.php') as $server) {
-            $argv[] = $server;
+        chdir(__DIR__ . '/server/');
+        foreach (['register', 'gateway', 'worker'] as $server) {
+            $argv[] = "{$server}.php";
         }
     } else {
         // 必要扩展
@@ -51,7 +55,7 @@ function serverRun($basePath = null) {
  * @return mixed
  */
 function workerEnv(string $key, $default = null) {
-    return \WorkermanAnnotation\Environment::get($key, $default);
+    return Environment::get($key, $default);
 }
 
 /**
@@ -61,7 +65,7 @@ function workerEnv(string $key, $default = null) {
  * @return mixed
  */
 function workerConfig(string $key = null, $default = null) {
-    return WorkermanAnnotation\Config::get($key, $default);
+    return Config::get($key, $default);
 }
 
 /**
@@ -86,4 +90,12 @@ function consoleArgv(string $name, $default = null) {
         }
     }
     return $value ?? $default;
+}
+
+/**
+ * 获取当前请求处理器
+ * @return Request|null
+ */
+function getRequest() {
+    return HttpRouter::$request;
 }

@@ -33,7 +33,7 @@ class Cache {
      * @return mixed
      */
     public static function connection(string $name = null) {
-        if (is_null($name)) {
+        if (empty($name)) {
             $name = workerConfig('cache.default');
         }
         if (empty(static::$connections[$name])) {
@@ -41,7 +41,7 @@ class Cache {
             if (empty(static::$makes[$options['driver']])) {
                 throw new \Exception("缓存连接 {$name} 未正确配置连接处理器");
             }
-            static::$connections[$name] = static::$makes[$options['driver']]($options);
+            static::$connections[$name] = static::$makes[$options['driver']]($options, $name);
         }
         return static::$connections[$name];
     }

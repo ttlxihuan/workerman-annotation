@@ -9,7 +9,7 @@ namespace WorkermanAnnotation\Annotations;
 use Closure;
 
 /**
- * @DefineUse(function=true)
+ * @DefineUse(function=true, class=true)
  * @DefineParam(name="name", type="string", default="") 指定事务处理配置名，不指定为默认数据库连接
  */
 class Transaction implements iAnnotation {
