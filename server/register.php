@@ -12,11 +12,14 @@ require_once __DIR__ . '/../bootstrap.php';
 if (!workerConfig('server.register.active', true)) {
     return;
 }
-// register 必须是text协议
-$register = new Register('text://' . workerConfig('server.register.addr'));
 
-// 日志处理
-Register::$logFile = BASE_PATH . '/logs/register.log';
+(function() {
+    // register 必须是text协议
+    new Register('text://' . workerConfig('server.register.addr'));
+
+    // 日志处理
+    Register::$logFile = BASE_PATH . '/logs/register.log';
+})();
 
 // 如果不是在根目录启动，则运行runAll方法
 if (!defined('GLOBAL_START')) {

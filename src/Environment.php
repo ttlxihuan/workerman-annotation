@@ -50,6 +50,8 @@ class Environment {
                 }
                 static::set($config[0], $config[1]);
             }
+        } else {
+            throw new \Exception("环境配置文件 {$env}.env 不存在");
         }
     }
 
