@@ -87,7 +87,7 @@ class WebsocketRouter implements iAnnotation {
                     $result[$route] = $data[$route];
                     return $this->encode($format, $result);
                 }
-                Gateway::closeClient(Context::$client_id, $message);
+                Gateway::closeClient(Context::$client_id);
             }
         });
     }
