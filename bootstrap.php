@@ -30,7 +30,5 @@ defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DI
     Config::load(BASE_PATH . '/config');
     // 创建日志文件
     $logDir = BASE_PATH . '/logs';
-    if (!file_exists($logDir)) {
-        mkdir($logDir);
-    }
+    file_exists($logDir) || @mkdir($logDir);
 })();
