@@ -52,7 +52,7 @@ class Transaction implements iAnnotation {
                         static::end('commit', ...$names);
                         return $res;
                     } catch (\Exception $err) {
-                        static::end('commit', ...$names);
+                        static::end('rollback', ...$names);
                         throw $err;
                     }
                 }
