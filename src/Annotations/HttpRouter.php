@@ -65,7 +65,7 @@ class HttpRouter implements iAnnotation {
                 if (count($data)) {
                     $type = array_shift($data);
                     foreach ($data as $ext) {
-                        $this->mimeTypes[strtolower($ext)] = $type;
+                        $this->mimeTypes[rtrim(strtolower($ext), ';')] = $type;
                     }
                 }
             }
@@ -78,7 +78,7 @@ class HttpRouter implements iAnnotation {
      * @return Response
      */
     protected function requestStatic(Request $request) {
-        $file = BASE_PATH . '/public/' . $request->path();
+        $file = BASE_PATH . '/public/' . (trim($request->path(), '/') ?: 'index.html');
         // 取出文件名后缀
         $filename = basename($file);
         $index = strrpos($filename, '.');
