@@ -32,7 +32,7 @@ class Timer implements iAnnotation {
             }
             TimerRun::add($param['interval'], function()use($parse, $method) {
                 $parse->call($method);
-            }, $param['persistent']);
+            }, [], $param['persistent']);
         }
         return [];
     }
