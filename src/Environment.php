@@ -16,11 +16,11 @@ class Environment {
      */
     public static function get(string $key, $default = null) {
         $value = getenv($key) ?: $default;
-        if (strcasecmp($value, 'false') === 0) {
+        if (strcasecmp((string) $value, 'false') === 0) {
             return false;
-        } elseif (strcasecmp($value, 'true') === 0) {
+        } elseif (strcasecmp((string) $value, 'true') === 0) {
             return true;
-        } elseif (strcasecmp($value, 'null') === 0) {
+        } elseif (strcasecmp((string) $value, 'null') === 0) {
             return null;
         }
         return $value;
