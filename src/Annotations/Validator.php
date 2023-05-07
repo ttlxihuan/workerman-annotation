@@ -6,7 +6,8 @@
 
 namespace WorkermanAnnotation\Annotations;
 
-use WorkermanAnnotation\Validator as ValidatorRun;
+use WorkermanAnnotation\Validation\iValidator;
+use WorkermanAnnotation\Validation\Validator as ValidatorRun;
 
 /**
  * @DefineUse(function=true, class=true)
@@ -18,27 +19,25 @@ use WorkermanAnnotation\Validator as ValidatorRun;
 class Validator implements iAnnotation {
 
     /**
-     * @var bool 事务操作处理器
+     * @var iValidator 验证处理器
      */
-    private static $handle = null;
+    private static $validator = null;
 
     /**
      * 初始化处理
      */
     public function __construct() {
-        if (empty(static::$handle)) {
-            static::addHandle(function (array $data, array $rules) {
-                ValidatorRun::adopt($data, $rules);
-            });
+        if (empty(static::$validator)) {
+            static::addHandle(new ValidatorRun());
         }
     }
 
     /**
      * 设置缓存处理器
-     * @param Closure $validator
+     * @param iValidator $validator
      */
-    public static function addHandle(\Closure $validator) {
-        static::$handle = $validator;
+    public static function addHandle(iValidator $validator) {
+        static::$validator = $validator;
     }
 
     /**
@@ -49,8 +48,8 @@ class Validator implements iAnnotation {
      */
     public function make(array $params, array $input): array {
         return [
-            function (array &$call_params, \Closure $next)use ($params) {
-                call_user_func(static::$handle, $call_params[0] ?? [], $params);
+            function (\Closure $next, array &$call_params)use ($params) {
+                static::$validator->adopt($call_params[0], $params);
                 return $next();
             }
         ];

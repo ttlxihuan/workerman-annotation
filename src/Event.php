@@ -44,12 +44,14 @@ class Event {
         date_default_timezone_set('PRC');
         static::$businessWorker = $businessWorker;
         static::$controllers->callIndex('bind-call', 'start', $businessWorker->id);
-        // 全局定时器启动
-        $config = workerConfig('annotation.timer');
-        if (is_array($config)) {
-            new AnnotationHandle(...$config);
-        } else {
-            throw new \Exception('请配定时器注解信息');
+        if (workerConfig('server.worker.name.timer')) {
+            // 全局定时器启动
+            $config = workerConfig('annotation.timer');
+            if (is_array($config)) {
+                new AnnotationHandle(...$config);
+            } else {
+                throw new \Exception('请配定时器注解信息');
+            }
         }
     }
 

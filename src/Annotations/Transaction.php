@@ -44,7 +44,7 @@ class Transaction implements iAnnotation {
     public function make(array $params, array $input): array {
         $names = array_column($params, 'name');
         return [
-            function(array $params, Closure $next) use($names) {
+            function(Closure $next) use($names) {
                 if (count(static::$handles)) {
                     try {
                         static::start(...$names);

@@ -44,8 +44,8 @@ class UseWmiddleware implements iAnnotation {
         $callbacks = [];
         foreach ($params as $param) {
             $name = $param['name'];
-            $callbacks[] = function($params, \Closure $next)use($name) {
-                return static::$annotation->callIndex('middleware', $name, ...$params) ?: $next();
+            $callbacks[] = function(\Closure $next, array $call_params)use($name) {
+                return static::$annotation->callIndex('middleware', $name, ...$call_params) ?: $next();
             };
         }
         return $callbacks;

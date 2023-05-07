@@ -37,11 +37,10 @@ class Cache implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
-        $method = $input['parse']->getRefName($input['ref']);
         return [
-            function(array $call_params, Closure $next) use($params, $method) {
+            function(Closure $next, array $call_params, string $name) use($params) {
                 if (count(static::$handles)) {
-                    $key = $method . md5(serialize($call_params));
+                    $key = $name . md5(serialize($call_params));
                     foreach ($params as $param) {
                         $data = static::$handles['get']($key, $param['name']);
                         if ($data !== null && $data !== false) {
