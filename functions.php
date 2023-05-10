@@ -69,6 +69,28 @@ function workerConfig(string $key = null, $default = null) {
 }
 
 /**
+ * 获取所有的注册服务地址集
+ * @return array
+ */
+function getAllRegisterAddresses() {
+    static $registerAddress = [];
+    if (empty($registerAddress)) {
+        if (workerEnv('APP_NODE')) {
+            foreach (glob(BASE_PATH . '/env/' . workerEnv('APP_ENV') . '-*.env') as $file) {
+                foreach (Environment::iteration(basename($file, '.env')) as $key => $value) {
+                    if ($key === 'REGISTER_ADDR') {
+                        $registerAddress[] = $value;
+                    }
+                }
+            }
+            $registerAddress = array_unique($registerAddress);
+        } else {
+            $registerAddress = [workerConfig('server.register_addresses')];
+        }
+    }
+}
+
+/**
  * 获取控制台参数
  * @param string $name
  * @param mixed $default

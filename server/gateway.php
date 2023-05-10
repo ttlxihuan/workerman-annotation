@@ -13,10 +13,6 @@ if (!workerConfig('server.gateway.active', true)) {
     return;
 }
 (function() {
-    $registerAddress = workerConfig('server.register_addresses');
-    if (empty($registerAddress)) {
-        $registerAddress = [workerConfig('server.register.addr')];
-    }
     // 配置协议选项，比如开启ssl
     $context_option = workerConfig('server.gateway.context');
     // gateway 进程，这里使用Text协议，可以用telnet测试
@@ -31,7 +27,7 @@ if (!workerConfig('server.gateway.active', true)) {
     // 则一般会使用4000 4001 4002 4003 4个端口作为内部通讯端口 
     $gateway->startPort = workerConfig('server.gateway.port');
     // 服务注册地址
-    $gateway->registerAddress = $registerAddress;
+    $gateway->registerAddress = getAllRegisterAddresses();
 
     // 与用户连接进行心跳处理，保持连接有效，部分协议长时间无通信会自动关闭连接
     // 心跳间隔，终端30秒内未心跳强制关闭

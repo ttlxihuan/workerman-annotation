@@ -139,8 +139,8 @@ class AnnotationHandle {
             $suffix = end($array);
             $children = [];
             $basePath = realpath($path);
-            foreach (glob("{$basePath}/*{$suffix}.php") as $file) {
-                $childClass = rtrim($baseNamespace . str_replace([$basePath, '/'], ['', '\\'], dirname($file)), '\\') . '\\' . basename($file, '.php');
+            foreach ($this->scandir($basePath, $suffix) as $space => $file) {
+                $childClass = $baseNamespace . $space . basename($file, '.php');
                 // 跳过基类自己
                 if (trim($childClass, '\\') === trim($baseClass, '\\')) {
                     continue;
@@ -157,6 +157,28 @@ class AnnotationHandle {
             $this->extractParentClass(new ReflectionClass($baseClass), $children);
         } else {
             throw new Exception('要加载的注解目录 ' . $path . ' 不能正常访问');
+        }
+    }
+
+    /**
+     * 递归循环目录
+     * @param string $basePath
+     * @param string $suffix
+     * @param string $childPath
+     * @return yield
+     */
+    protected function scandir(string $basePath, string $suffix, string $childPath = '') {
+        $reg = preg_quote("{$suffix}.php");
+        foreach (scandir($basePath) as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $file = "$basePath/$item";
+            if (is_dir($file)) {
+                yield from $this->scandir($file, $suffix, "$childPath$item/");
+            } elseif (preg_match("/{$reg}$/", $item)) {
+                yield str_replace('/', '\\', $childPath) => $item;
+            }
         }
     }
 
@@ -448,7 +470,7 @@ class AnnotationHandle {
      */
     public function call(string $name, ...$params) {
         $callbacks = $this->callbacks[$name] ?? [];
-        $next = function()use(&$callbacks, &$next, &$params, $name) {
+        $next = function ()use (&$callbacks, &$next, &$params, $name) {
             if ($callback = array_shift($callbacks)) {
                 return $callback($next, $params, $name);
             }

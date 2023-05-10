@@ -127,6 +127,15 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 * rules     验证规则
 * title     字段名，验证失败时提示用，不指定为 name
 
+#### @Lock(timeout=int, wait=bool)
+调用互锁，缓存(redis)锁，单实例锁
+* timeout   锁定最大时间（秒），防止异常一直锁定
+* wait      是否等待锁释放
+
+#### @Log(timeout=int)
+调用超时日志记录
+* timeout   调用处理超时时长（秒）
+
 ### 自定义注解
 当内置注解不够用时可以自定义注解处理器。每个注解均有对应一个处理类，这个类必需继承接口 WorkermanAnnotation\Annotations\iAnnotation 。
 通过DefineUse和DefineParam注解进行绑定参数和使用位置。

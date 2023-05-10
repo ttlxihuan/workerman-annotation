@@ -40,6 +40,17 @@ class Environment {
      * @param string $env
      */
     public static function load(string $env) {
+        foreach (static::iteration($env) as $key => $value) {
+            static::set($key, $value);
+        }
+    }
+
+    /**
+     * 迭代环境配置文件变量
+     * @param string $env
+     * @throws \Exception
+     */
+    public static function iteration(string $env) {
         $file = BASE_PATH . '/env/' . $env . '.env';
         if (file_exists($file)) {
             $array = explode("\n", file_get_contents($file));
@@ -48,7 +59,7 @@ class Environment {
                 if (strpos($config[0], '#') === 0 || getenv($config[0]) !== false || count($config) != 2) {
                     continue;
                 }
-                static::set($config[0], $config[1]);
+                yield $config[0] => $config[1];
             }
         } else {
             throw new \Exception("环境配置文件 {$env}.env 不存在");

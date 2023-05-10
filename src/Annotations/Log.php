@@ -22,11 +22,14 @@ class Log implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
+        if (!workerEnv('APP_DEBUG')) {
+            return [];
+        }
         $param = end($params);
         $timeout = $param['timeout'];
         $parameter = $param['parameter'];
         return [
-            function(Closure $next, array $call_params, string $name) use($timeout, $parameter) {
+            function (Closure $next, array $call_params, string $name) use ($timeout, $parameter) {
                 $start = microtime(true);
                 $result = $next();
                 $time = bcsub($start, microtime(true), 6);

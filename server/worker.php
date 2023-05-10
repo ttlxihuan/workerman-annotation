@@ -15,10 +15,6 @@ if (!workerConfig('server.worker.active', true)) {
 }
 
 (function() {
-    $registerAddress = workerConfig('server.register_addresses');
-    if (empty($registerAddress)) {
-        $registerAddress = [workerConfig('server.register.addr')];
-    }
     // bussinessWorker 进程
     $worker = new BusinessWorker();
     // worker名称
@@ -26,7 +22,7 @@ if (!workerConfig('server.worker.active', true)) {
     // bussinessWorker进程数量
     $worker->count = defined('PROCESS_NUM') ? PROCESS_NUM : 1;
     // 服务注册地址
-    $worker->registerAddress = $registerAddress;
+    $worker->registerAddress = getAllRegisterAddresses();
     // 事件处理
     $worker->eventHandler = Event::class;
 
