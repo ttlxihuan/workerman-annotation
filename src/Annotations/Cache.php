@@ -38,7 +38,7 @@ class Cache implements iAnnotation {
      */
     public function make(array $params, array $input): array {
         return [
-            function(Closure $next, array $call_params, string $name) use($params) {
+            function (array $call_params, Closure $next, string $name) use ($params) {
                 if (count(static::$handles)) {
                     $key = $name . md5(serialize($call_params));
                     foreach ($params as $param) {

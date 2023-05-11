@@ -472,7 +472,7 @@ class AnnotationHandle {
         $callbacks = $this->callbacks[$name] ?? [];
         $next = function ()use (&$callbacks, &$next, &$params, $name) {
             if ($callback = array_shift($callbacks)) {
-                return $callback($next, $params, $name);
+                return $callback($params, $next, $name);
             }
         };
         return $next();

@@ -8,7 +8,7 @@ namespace WorkermanAnnotation\Validation;
 
 use Closure;
 
-class Validator extends iValidator {
+class Validator implements iValidator {
 
     /**
      * @var array 验证规则说明
