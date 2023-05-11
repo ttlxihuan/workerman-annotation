@@ -14,8 +14,8 @@ use Workerman\Lib\Timer as TimerRun;
  * @DefineParam(name="id", type="int", default=0)  指定定时器启用进程号，为负数则所有进程号
  * @DefineParam(name="interval", type="int", default=1) 指定定时间隔时长（秒）
  * @DefineParam(name="persistent", type="bool", default=true) 是否为持久定时（是否为循环定时器）
- * @DefineParam(name="basis", type="string", default=null) 指定起始计算时间，用于标准时间定时器
- * @DefineParam(name="worker", type="string", default=null) 指定定时器启动业务名，不指定通用
+ * @DefineParam(name="basis", type="string", default='') 指定起始计算时间，用于标准时间定时器
+ * @DefineParam(name="worker", type="string", default='') 指定定时器启动业务名，不指定通用
  */
 class Timer implements iAnnotation {
 
