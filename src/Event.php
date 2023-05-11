@@ -14,7 +14,7 @@ class Event {
     /**
      * @var Annotation 控制器集
      */
-    protected static $controllers;
+    public static $controllers;
 
     /**
      * @var BusinessWorker 业务处理服务实例
