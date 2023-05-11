@@ -85,9 +85,10 @@ function getAllRegisterAddresses() {
             }
             $registerAddress = array_unique($registerAddress);
         } else {
-            $registerAddress = [workerConfig('server.register_addresses')];
+            $registerAddress = [workerConfig('server.register.addr')];
         }
     }
+    return $registerAddress;
 }
 
 /**
