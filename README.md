@@ -119,6 +119,8 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 * id        业务服务进程ID，<0时绑定在所有业务服务进程上，默认：0
 * interval  定时调用间隔时长，默认：1
 * persistent 是否循环定时器，默认：true
+* basis     指定基准时间（H:i:s），用于按标准时间间隔定时处理
+* worker    指定启动业务进程名，用于多业务进程名时划分处理
 
 #### @Validator(name=string, value=mixed, rules=string, title=string)
 验证参数注解，用来验证函数的第一个参数（必需是数组）。
@@ -126,11 +128,6 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 * value     默认值
 * rules     验证规则
 * title     字段名，验证失败时提示用，不指定为 name
-
-#### @Lock(timeout=int, wait=bool)
-调用互锁，缓存(redis)锁，单实例锁
-* timeout   锁定最大时间（秒），防止异常一直锁定
-* wait      是否等待锁释放
 
 #### @Log(timeout=int)
 调用超时日志记录

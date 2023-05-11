@@ -15,6 +15,7 @@ use Workerman\Lib\Timer as TimerRun;
  * @DefineParam(name="interval", type="int", default=1) 指定定时间隔时长（秒）
  * @DefineParam(name="persistent", type="bool", default=true) 是否为持久定时（是否为循环定时器）
  * @DefineParam(name="basis", type="string", default=null) 指定起始计算时间，用于标准时间定时器
+ * @DefineParam(name="worker", type="string", default=null) 指定定时器启动业务名，不指定通用
  */
 class Timer implements iAnnotation {
 
@@ -29,7 +30,11 @@ class Timer implements iAnnotation {
         $method = $parse->getRefName($input['ref']);
         foreach ($params as $param) {
             $interval = $param['interval'];
-            if ($interval <= 0 || (Event::$businessWorker->count > 1 && $param['id'] != Event::$businessWorker->id)) {
+            if (($param['worker'] && Event::$businessWorker->name !== $param['worker']) || (Event::$businessWorker->count > 1 && $param['id'] != Event::$businessWorker->id)) {
+                continue;
+            }
+            if ($interval <= 0) {
+                $parse->call($method);
                 continue;
             }
             $persistent = $param['persistent'];
@@ -37,7 +42,7 @@ class Timer implements iAnnotation {
                 if (!preg_match('/(2[0-3]|[0-1]\d):[0-5]\d:[0-5]\d/', $basis)) {
                     throw new \Exception('定时器基础必需是有效时:分:秒');
                 }
-                $timer_id = TimerRun::add(1, function()use($parse, $method, $basis, $interval, $persistent, &$timer_id) {
+                $timer_id = TimerRun::add(1, function ()use ($parse, $method, $basis, $interval, $persistent, &$timer_id) {
                             static $prev = null, $tomorrow = null;
                             $now = time();
                             if ($prev === null) {
@@ -58,7 +63,7 @@ class Timer implements iAnnotation {
                             }
                         });
             } else {
-                TimerRun::add($interval, function()use($parse, $method) {
+                TimerRun::add($interval, function ()use ($parse, $method) {
                     $parse->call($method);
                 }, [], $persistent);
             }
