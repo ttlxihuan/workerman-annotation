@@ -7,6 +7,7 @@
 namespace WorkermanAnnotation\Validation;
 
 use Closure;
+use WorkermanAnnotation\BusinessException;
 
 class Validator implements iValidator {
 
