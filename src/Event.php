@@ -48,7 +48,7 @@ class Event {
             // 全局定时器启动
             $config = workerConfig('annotation.timer');
             if (is_array($config)) {
-                new AnnotationHandle(...$config);
+                (new AnnotationHandle(...$config))->call('@');
             } else {
                 throw new \Exception('请配定时器注解信息');
             }

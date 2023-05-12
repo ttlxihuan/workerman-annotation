@@ -28,13 +28,14 @@ class Timer implements iAnnotation {
     public function make(array $params, array $input): array {
         $parse = $input['parse'];
         $method = $parse->getRefName($input['ref']);
+        $hasInit = false;
         foreach ($params as $param) {
             $interval = $param['interval'];
             if (($param['worker'] && Event::$businessWorker->name !== $param['worker']) || (Event::$businessWorker->count > 1 && $param['id'] != Event::$businessWorker->id)) {
                 continue;
             }
             if ($interval <= 0) {
-                $parse->call($method);
+                $hasInit = true;
                 continue;
             }
             $persistent = $param['persistent'];
@@ -67,6 +68,12 @@ class Timer implements iAnnotation {
                     $parse->call($method);
                 }, [], $persistent);
             }
+        }
+        if ($hasInit) {
+            $parse->addCall(function (array &$call_params, \Closure $next)use ($parse, $method) {
+                $parse->call($method);
+                $next();
+            });
         }
         return [];
     }
