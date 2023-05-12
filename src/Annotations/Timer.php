@@ -47,9 +47,14 @@ class Timer implements iAnnotation {
                             static $prev = null, $tomorrow = null;
                             $now = time();
                             if ($prev === null) {
-                                $start = strtotime(date('Y-m-d ', $tomorrow ?: $now) . $basis);
-                                $prev = floor(max($now - $start, 0) / $interval);
-                                $tomorrow = $start + 86400;
+                                if ($tomorrow) {
+                                    $start = $tomorrow;
+                                    $prev = $start + $interval;
+                                } else {
+                                    $start = strtotime(date('Y-m-d ', $now) . $basis);
+                                    $prev = $start + floor(($now - $start) / $interval + 1) * $interval;
+                                }
+                                $tomorrow = strtotime('today', $start + ($interval >= 86400 ? $interval : 86400));
                             }
                             if ($prev <= $now) {
                                 $parse->call($method);
