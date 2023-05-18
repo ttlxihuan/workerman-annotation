@@ -6,6 +6,7 @@
 
 namespace WorkermanAnnotation\Annotations;
 
+use Exception;
 use GatewayWorker\Lib\Context;
 use GatewayWorker\BusinessWorker;
 
@@ -27,23 +28,25 @@ class Log implements iAnnotation {
         }
         $param = end($params);
         $timeout = $param['timeout'];
-        $parameter = $param['parameter'];
         return [
-            function (array $call_params, Closure $next, string $name) use ($timeout, $parameter) {
+            function (array $call_params, \Closure $next, string $name) use ($timeout) {
                 $start = microtime(true);
-                $result = $next();
+                try {
+                    $result = $next();
+                } catch (Exception $err) {
+                    $result = $err;
+                }
                 $time = bcsub($start, microtime(true), 6);
                 if (bccomp($time, $timeout, 6) >= 0) {
                     $client_id = Context::$client_id;
                     $params = [];
                     foreach ($call_params as $param) {
-                        if (is_object($param)) {
-                            $params[] = 'object(' . get_class($param) . ')';
-                        } else {
-                            $params[] = var_export($call_params, true);
-                        }
+                        $params[] = json_encode($param, JSON_UNESCAPED_UNICODE);
                     }
-                    BusinessWorker::log(" $client_id => {$name}(  " . implode(', ', $params) . " ) {$time}s");
+                    BusinessWorker::log(" $client_id => {$name}(" . implode(', ', $params) . ") {$time}s");
+                }
+                if ($result instanceof Exception) {
+                    throw $result;
                 }
                 return $result;
             }

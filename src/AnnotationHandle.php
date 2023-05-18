@@ -213,7 +213,7 @@ class AnnotationHandle {
                 }
             }
             // 解析库中没有下级
-            if ($ref->isInstantiable() && !$this->extractParentClass($ref, $childrenRef, $uses)) {
+            if (!$this->extractParentClass($ref, $childrenRef, $uses) && $ref->isInstantiable()) {
                 unset($childrenRef[$index]);
                 $this->extractClass($ref, $uses, $data);
                 $count++;
@@ -410,7 +410,7 @@ class AnnotationHandle {
             case 'boolean':
                 return $type === 'bool';
             case 'integer':
-                return $type === 'int';
+                return $type === 'int' || $type === 'float';
             case 'double':
                 return $type === 'float';
             case 'string':
