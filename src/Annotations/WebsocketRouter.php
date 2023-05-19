@@ -110,9 +110,9 @@ class WebsocketRouter implements iAnnotation {
     /**
      * 获取数据格式类型
      * @param string $message
-     * @return array
+     * @return array|false
      */
-    protected function decode(string $format, $message): array {
+    protected function decode(string $format, $message) {
         switch ($format) {
             case 'json':
                 $array = json_decode($message, true);
