@@ -6,7 +6,6 @@
 
 namespace WorkermanAnnotation\Annotations;
 
-use WorkermanAnnotation\Event;
 use Workerman\Lib\Timer as TimerRun;
 
 /**
@@ -28,55 +27,53 @@ class Timer implements iAnnotation {
     public function make(array $params, array $input): array {
         $parse = $input['parse'];
         $method = $parse->getRefName($input['ref']);
-        $hasInit = false;
         foreach ($params as $param) {
-            $interval = $param['interval'];
-            if (($param['worker'] && Event::$businessWorker->name !== $param['worker']) || (Event::$businessWorker->count > 1 && $param['id'] != Event::$businessWorker->id)) {
-                continue;
-            }
-            if ($interval <= 0) {
-                $hasInit = true;
-                continue;
-            }
-            $persistent = $param['persistent'];
-            if ($basis = $param['basis']) { // 基准时间
-                if (!preg_match('/(2[0-3]|[0-1]\d):[0-5]\d:[0-5]\d/', $basis)) {
-                    throw new \Exception('定时器基础必需是有效时:分:秒');
+            $parse->addCall(function (array &$call_params, \Closure $next)use ($parse, $method, $param) {
+                list($name, $id) = $call_params;
+                if (($param['worker'] && $param['worker'] !== $name) || ($id >= 0 && $id != $param['id'])) {
+                    goto NEXT_TIMER;
                 }
-                $timer_id = TimerRun::add(1, function ()use ($parse, $method, $basis, $interval, $persistent, &$timer_id) {
-                            static $prev = null, $tomorrow = null;
-                            $now = time();
-                            if ($prev === null) {
-                                if ($tomorrow) {
-                                    $start = $tomorrow;
-                                    $prev = $start + $interval;
-                                } else {
-                                    $start = strtotime(date('Y-m-d ', $now) . $basis);
-                                    $prev = $start + floor(($now - $start) / $interval + 1) * $interval;
-                                }
-                                $tomorrow = strtotime('today', $start + ($interval >= 86400 ? $interval : 86400));
-                            }
-                            if ($prev <= $now) {
-                                $parse->call($method);
-                                if (!$persistent) {
-                                    TimerRun::del($timer_id);
-                                    return;
-                                }
-                                $prev += $interval;
-                                if ($prev > $tomorrow) {
-                                    $prev = null;
-                                }
-                            }
-                        });
-            } else {
-                TimerRun::add($interval, function ()use ($parse, $method) {
+                $interval = $param['interval'];
+                if ($interval <= 0) {
                     $parse->call($method);
-                }, [], $persistent);
-            }
-        }
-        if ($hasInit) {
-            $parse->addCall(function (array &$call_params, \Closure $next)use ($parse, $method) {
-                $parse->call($method);
+                    goto NEXT_TIMER;
+                }
+                $persistent = $param['persistent'];
+                if ($basis = $param['basis']) { // 基准时间
+                    if (!preg_match('/(2[0-3]|[0-1]\d):[0-5]\d:[0-5]\d/', $basis)) {
+                        throw new \Exception('定时器基础必需是有效时:分:秒');
+                    }
+                    $timer_id = TimerRun::add(1, function ()use ($parse, $method, $basis, $interval, $persistent, &$timer_id) {
+                                static $prev = null, $tomorrow = null;
+                                $now = time();
+                                if ($prev === null) {
+                                    if ($tomorrow) {
+                                        $start = $tomorrow;
+                                        $prev = $start + $interval;
+                                    } else {
+                                        $start = strtotime(date('Y-m-d ', $now) . $basis);
+                                        $prev = $start + floor(($now - $start) / $interval + 1) * $interval;
+                                    }
+                                    $tomorrow = strtotime('today', $start + ($interval >= 86400 ? $interval : 86400));
+                                }
+                                if ($prev <= $now) {
+                                    $parse->call($method);
+                                    if (!$persistent) {
+                                        TimerRun::del($timer_id);
+                                        return;
+                                    }
+                                    $prev += $interval;
+                                    if ($prev > $tomorrow) {
+                                        $prev = null;
+                                    }
+                                }
+                            });
+                } else {
+                    TimerRun::add($interval, function ()use ($parse, $method) {
+                        $parse->call($method);
+                    }, [], $persistent);
+                }
+                NEXT_TIMER:
                 $next();
             });
         }
