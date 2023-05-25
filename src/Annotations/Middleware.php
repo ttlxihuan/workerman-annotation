@@ -8,7 +8,7 @@ namespace WorkermanAnnotation\Annotations;
 
 /**
  * @DefineUse(function=true)
- * @DefineParam(name="name", type="string") 定义中间件名
+ * @DefineParam(name="name", type="string", default='') 定义中间件名
  */
 class Middleware implements iAnnotation {
 
@@ -20,8 +20,9 @@ class Middleware implements iAnnotation {
      */
     public function make(array $params, array $input): array {
         $indexs = [];
+        $method = $input['ref']->getName();
         foreach ($params as $param) {
-            $indexs[] = $param['name'];
+            $indexs[] = $param['name'] ?: $method;
         }
         return [
             'middleware' => $indexs

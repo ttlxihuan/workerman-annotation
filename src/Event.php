@@ -17,11 +17,6 @@ class Event {
     public static $controllers;
 
     /**
-     * @var Annotation 定时器集
-     */
-    public static $timers;
-
-    /**
      * @var BusinessWorker 业务处理服务实例
      */
     public static $businessWorker;
@@ -31,18 +26,11 @@ class Event {
      */
     public static function init() {
         // 控制器加载
-        $controller = workerConfig('annotation.controller');
-        if (is_array($controller)) {
-            static::$controllers = new AnnotationHandle(...$controller);
+        $config = workerConfig('annotation.controller');
+        if (is_array($config)) {
+            static::$controllers = new AnnotationHandle(...$config);
         } else {
             throw new \Exception('请配置控制器注解信息');
-        }
-        // 全局定时器启动
-        $timer = workerConfig('annotation.timer');
-        if (is_array($timer)) {
-            static::$timers = new AnnotationHandle(...$timer);
-        } else {
-            throw new \Exception('请配定时器注解信息');
         }
     }
 
@@ -53,10 +41,9 @@ class Event {
      * @param BusinessWorker $businessWorker 子进程实例
      */
     public static function onWorkerStart(BusinessWorker $businessWorker) {
-        date_default_timezone_set('PRC');
+        date_default_timezone_set(workerEnv('server.timezone', 'PRC'));
         static::$businessWorker = $businessWorker;
         static::$controllers->callIndex('bind-call', 'start', $businessWorker->id);
-        static::$timers->call('@', $businessWorker->name, $businessWorker->id);
     }
 
     /**

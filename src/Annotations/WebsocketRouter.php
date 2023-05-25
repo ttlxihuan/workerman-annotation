@@ -9,6 +9,8 @@
 namespace WorkermanAnnotation\Annotations;
 
 use GatewayWorker\Lib\Gateway;
+use GatewayWorker\Lib\Context;
+use GatewayWorker\BusinessWorker;
 use WorkermanAnnotation\AnnotationHandle;
 use WorkermanAnnotation\BusinessException;
 
@@ -75,6 +77,9 @@ class WebsocketRouter implements iAnnotation {
                 $result = $parse->callIndex('bind-call', 'websocket', $data, new BusinessException('找不到路由'));
             } catch (\Exception $err) {
                 $result = $parse->callIndex('bind-call', 'websocket', $data, $err);
+                if (!$err instanceof BusinessException) {
+                    BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
+                }
             }
             RETURN_RESULT:
             if (is_array($result) || $result instanceof \ArrayAccess) {
@@ -82,7 +87,7 @@ class WebsocketRouter implements iAnnotation {
                     $result[$route] = $data[$route];
                     return $this->encode($format, $result);
                 }
-                Gateway::closeCurrentClient();
+                Gateway::closeClient(Context::$client_id);
             }
         });
     }

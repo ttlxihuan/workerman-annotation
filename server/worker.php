@@ -14,21 +14,17 @@ if (!workerConfig('server.worker.active', true)) {
     return;
 }
 
-(function() {
+(function () {
     // bussinessWorker 进程
     $worker = new BusinessWorker();
     // worker名称
     $worker->name = workerConfig('server.worker.name');
     // bussinessWorker进程数量
-    $worker->count = defined('PROCESS_NUM') ? PROCESS_NUM : 1;
+    $worker->count = defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 6) : 1;
     // 服务注册地址
     $worker->registerAddress = getAllRegisterAddresses();
     // 事件处理
     $worker->eventHandler = Event::class;
-
-    // 网关管理，修改服务注册地址
-    \GatewayWorker\Lib\Gateway::$registerAddress = $worker->registerAddress;
-
     // 日志处理
     BusinessWorker::$logFile = BASE_PATH . '/logs/business-worker.log';
 })();

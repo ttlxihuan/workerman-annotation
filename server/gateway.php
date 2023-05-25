@@ -20,7 +20,7 @@ if (!workerConfig('server.gateway.active', true)) {
     // gateway名称，status方便查看
     $gateway->name = workerConfig('server.gateway.name');
     // gateway进程数
-    $gateway->count = defined('PROCESS_NUM') ? PROCESS_NUM : 1;
+    $gateway->count = defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 6) : 1;
     // 本机ip，分布式部署时使用内网ip
     $gateway->lanIp = workerConfig('server.gateway.host');
     // 内部与业务处理通讯起始端口，假如$gateway->count=4，起始端口为4000

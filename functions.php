@@ -24,7 +24,7 @@ function serverRun($basePath = null) {
         global $argv;
         unset($argv[0]);
         chdir(__DIR__ . '/server/');
-        foreach (['register', 'gateway', 'worker'] as $server) {
+        foreach (['register', 'gateway', 'worker', 'timer'] as $server) {
             $argv[] = "{$server}.php";
         }
     } else {
@@ -44,7 +44,6 @@ function serverRun($basePath = null) {
             require_once $server;
         }
     }
-    // 运行所有服务
     Worker::runAll();
 }
 

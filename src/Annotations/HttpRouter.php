@@ -15,6 +15,7 @@ use GatewayWorker\Lib\Gateway;
 use Workerman\Protocols\Http\Response;
 use Workerman\Connection\TcpConnection;
 use WorkermanAnnotation\AnnotationHandle;
+use WorkermanAnnotation\BusinessException;
 use WorkermanAnnotation\Protocols\Http\Request;
 
 /**
@@ -157,6 +158,9 @@ class HttpRouter implements iAnnotation {
                 }
             } catch (\Exception $err) {
                 $result = $parse->callIndex('bind-call', 'http', $request);
+                if (!$err instanceof BusinessException) {
+                    BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
+                }
             }
             static::$request = null;
             if (is_null($result)) {
