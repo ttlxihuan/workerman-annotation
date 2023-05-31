@@ -20,7 +20,7 @@ if (!workerConfig('server.worker.active', true)) {
     // worker名称
     $worker->name = workerConfig('server.worker.name');
     // bussinessWorker进程数量
-    $worker->count = defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 6) : 1;
+    $worker->count = getWorkerCount();
     // 服务注册地址
     $worker->registerAddress = getAllRegisterAddresses();
     // 事件处理

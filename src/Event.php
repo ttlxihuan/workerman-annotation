@@ -41,7 +41,6 @@ class Event {
      * @param BusinessWorker $businessWorker 子进程实例
      */
     public static function onWorkerStart(BusinessWorker $businessWorker) {
-        date_default_timezone_set(workerEnv('server.timezone', 'PRC'));
         static::$businessWorker = $businessWorker;
         static::$controllers->callIndex('bind-call', 'start', $businessWorker->id);
     }

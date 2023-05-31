@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../autoload.php';
 
 defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DIR__ . '/../../../')));
 
-(function() {
+(function () {
     // 环境变量加载
     $env = workerEnv('APP_ENV') ?: consoleArgv('env', 'production');
     // 分布式处理，需要配置多个环境变量文件，以适应不同和节点启动
@@ -31,4 +31,6 @@ defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DI
     // 创建日志文件
     $logDir = BASE_PATH . '/logs';
     file_exists($logDir) || @mkdir($logDir);
+    // 全局时区
+    date_default_timezone_set(workerEnv('server.timezone', 'PRC'));
 })();

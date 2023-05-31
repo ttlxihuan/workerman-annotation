@@ -12,7 +12,7 @@ require_once __DIR__ . '/../bootstrap.php';
 if (!workerConfig('server.gateway.active', true)) {
     return;
 }
-(function() {
+(function () {
     // 配置协议选项，比如开启ssl
     $context_option = workerConfig('server.gateway.context');
     // gateway 进程，这里使用Text协议，可以用telnet测试
@@ -20,7 +20,7 @@ if (!workerConfig('server.gateway.active', true)) {
     // gateway名称，status方便查看
     $gateway->name = workerConfig('server.gateway.name');
     // gateway进程数
-    $gateway->count = defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 6) : 1;
+    $gateway->count = getGatewayCount();
     // 本机ip，分布式部署时使用内网ip
     $gateway->lanIp = workerConfig('server.gateway.host');
     // 内部与业务处理通讯起始端口，假如$gateway->count=4，起始端口为4000

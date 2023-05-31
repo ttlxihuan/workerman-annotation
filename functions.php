@@ -5,6 +5,7 @@
  */
 
 use Workerman\Worker;
+use WorkermanAnnotation\Event;
 use WorkermanAnnotation\Config;
 use WorkermanAnnotation\Environment;
 use WorkermanAnnotation\Annotations\HttpRouter;
@@ -24,7 +25,7 @@ function serverRun($basePath = null) {
         global $argv;
         unset($argv[0]);
         chdir(__DIR__ . '/server/');
-        foreach (['register', 'gateway', 'worker', 'timer'] as $server) {
+        foreach (['register', 'gateway', 'timer', 'worker'] as $server) {
             $argv[] = "{$server}.php";
         }
     } else {
@@ -120,4 +121,25 @@ function consoleArgv(string $name, $default = null) {
  */
 function getRequest() {
     return HttpRouter::$request;
+}
+
+/**
+ * 获取业务处理进程数
+ */
+function getWorkerCount() {
+    return defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 6) : 1;
+}
+
+/**
+ * 获取业务处理进程ID
+ */
+function getWorkerId() {
+    return Event::$businessWorker ? Event::$businessWorker->id : -1;
+}
+
+/**
+ * 获取网关进程数
+ */
+function getGatewayCount() {
+    return defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 2) : 1;
 }
