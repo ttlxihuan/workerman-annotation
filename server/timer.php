@@ -21,7 +21,7 @@ if (!workerConfig('server.timer.active', true)) {
     // worker名称
     $worker->name = workerConfig('server.timer.name');
     // 定时器处理进程数
-    $worker->count = workerConfig('server.timer.count', 1);
+    $worker->count = getTimerCount() ?: 1;
     // 网关管理，修改服务注册地址
     \GatewayWorker\Lib\Gateway::$registerAddress = getAllRegisterAddresses();
     // 日志处理
@@ -35,7 +35,7 @@ if (!workerConfig('server.timer.active', true)) {
         throw new \Exception('请配定时器注解信息');
     }
     $worker->onWorkerStart = function (Worker $worker)use ($timer) {
-        $timer->call('@', $worker->name, $worker->id);
+        $timer->call('@', $worker->name, getTimerCount() > 0 ? $worker->id : -1);
     };
 })();
 

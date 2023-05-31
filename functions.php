@@ -124,6 +124,13 @@ function getRequest() {
 }
 
 /**
+ * 获取业务处理进程ID
+ */
+function getWorkerId() {
+    return Event::$businessWorker ? Event::$businessWorker->id : -1;
+}
+
+/**
  * 获取业务处理进程数
  */
 function getWorkerCount() {
@@ -131,10 +138,10 @@ function getWorkerCount() {
 }
 
 /**
- * 获取业务处理进程ID
+ * 获取定时处理进程数
  */
-function getWorkerId() {
-    return Event::$businessWorker ? Event::$businessWorker->id : -1;
+function getTimerCount() {
+    return defined('GLOBAL_START') ? workerConfig('server.timer.count', 1) : 0;
 }
 
 /**
