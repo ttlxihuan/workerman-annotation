@@ -43,13 +43,13 @@ if (!workerConfig('server.gateway.active', true)) {
 
     // Http协议需要修改解码处理，转交到业务处理中
     $gateway->onWorkerStart = function (Gateway $gateway) {
+        // 日志文件
+        Gateway::$logFile = BASE_PATH . '/logs/gateway.log';
         if (trim($gateway->protocol, '\\') === trim(\Workerman\Protocols\Http::class, '\\')) {
             $gateway->protocol = \WorkermanAnnotation\Protocols\HttpGateway::class;
         }
     };
 
-    // 日志处理
-    Gateway::$logFile = BASE_PATH . '/logs/gateway.log';
 })();
 
 // 如果不是在根目录启动，则运行runAll方法

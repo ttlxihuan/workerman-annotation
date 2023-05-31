@@ -25,8 +25,11 @@ if (!workerConfig('server.worker.active', true)) {
     $worker->registerAddress = getAllRegisterAddresses();
     // 事件处理
     $worker->eventHandler = Event::class;
-    // 日志处理
-    BusinessWorker::$logFile = BASE_PATH . '/logs/business-worker.log';
+    // 初始处理
+    $worker->onWorkerStart = function () {
+        // 日志处理
+        BusinessWorker::$logFile = BASE_PATH . '/logs/business-worker.log';
+    };
 })();
 
 Event::init();

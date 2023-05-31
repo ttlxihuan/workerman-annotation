@@ -13,12 +13,14 @@ if (!workerConfig('server.register.active', true)) {
     return;
 }
 
-(function() {
+(function () {
     // register 必须是text协议
-    new Register('text://' . workerConfig('server.register.addr'));
-
-    // 日志处理
-    Register::$logFile = BASE_PATH . '/logs/register.log';
+    $register = new Register('text://' . workerConfig('server.register.addr'));
+    // 初始处理
+    $register->onWorkerStart = function () {
+        // 日志文件
+        Register::$logFile = BASE_PATH . '/logs/register.log';
+    };
 })();
 
 // 如果不是在根目录启动，则运行runAll方法

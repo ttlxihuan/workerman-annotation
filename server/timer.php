@@ -24,8 +24,6 @@ if (!workerConfig('server.timer.active', true)) {
     $worker->count = getTimerCount() ?: 1;
     // 网关管理，修改服务注册地址
     \GatewayWorker\Lib\Gateway::$registerAddress = getAllRegisterAddresses();
-    // 日志处理
-    Worker::$logFile = BASE_PATH . '/logs/timer.log';
 
     // 全局定时器启动
     $config = workerConfig('annotation.timer');
@@ -34,7 +32,10 @@ if (!workerConfig('server.timer.active', true)) {
     } else {
         throw new \Exception('请配定时器注解信息');
     }
+    // 初始处理
     $worker->onWorkerStart = function (Worker $worker)use ($timer) {
+        // 日志文件
+        Worker::$logFile = BASE_PATH . '/logs/timer.log';
         $timer->call('@', $worker->name, getTimerCount() > 0 ? $worker->id : -1);
     };
 })();
