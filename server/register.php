@@ -3,8 +3,8 @@
 /**
  * 服务注册服务启动处理
  */
-use \Workerman\Worker;
-use \GatewayWorker\Register;
+use Workerman\Worker;
+use GatewayWorker\Register;
 
 require_once __DIR__ . '/../bootstrap.php';
 

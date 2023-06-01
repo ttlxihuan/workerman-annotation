@@ -91,7 +91,7 @@ class Event {
      * @param mixed $data
      */
     public static function onWebSocketConnect($client_id, $data) {
-        static::$controllers->callIndex('bind-call', 'connect', $client_id, $data);
+        static::$controllers->callIndex('bind-call', 'webSocketConnect', $client_id, $data);
     }
 
 }

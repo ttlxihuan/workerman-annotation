@@ -4,7 +4,7 @@
  * 业务定时处理服务启动文件
  * 定时器剥离出业务服可缓解相互影响
  */
-use \Workerman\Worker;
+use Workerman\Worker;
 use WorkermanAnnotation\Event;
 use WorkermanAnnotation\AnnotationHandle;
 

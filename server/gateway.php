@@ -3,8 +3,9 @@
 /**
  * 网关收发服务启动处理
  */
-use \Workerman\Worker;
-use \GatewayWorker\Gateway;
+use Workerman\Worker;
+use GatewayWorker\Gateway;
+use Workerman\Connection\TcpConnection;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -16,7 +17,7 @@ if (!workerConfig('server.gateway.active', true)) {
     // 配置协议选项，比如开启ssl
     $context_option = workerConfig('server.gateway.context');
     // gateway 进程，这里使用Text协议，可以用telnet测试
-    $gateway = new Gateway(workerConfig('server.gateway.listen'), $context_option);
+    $gateway = new Gateway($listen = workerConfig('server.gateway.listen'), $context_option);
     // gateway名称，status方便查看
     $gateway->name = workerConfig('server.gateway.name');
     // gateway进程数
@@ -40,16 +41,26 @@ if (!workerConfig('server.gateway.active', true)) {
     if (isset($context_option['ssl'])) {
         $gateway->transport = 'ssl';
     }
-
+    // 获取协议名
+    $scheme = parse_url($listen, PHP_URL_SCHEME);
     // Http协议需要修改解码处理，转交到业务处理中
-    $gateway->onWorkerStart = function (Gateway $gateway) {
+    $gateway->onWorkerStart = function (Gateway $gateway)use ($scheme) {
         // 日志文件
         Gateway::$logFile = BASE_PATH . '/logs/gateway.log';
-        if (trim($gateway->protocol, '\\') === trim(\Workerman\Protocols\Http::class, '\\')) {
+        // 协议兼容处理
+        if (strcasecmp('http', $scheme) === 0) {
             $gateway->protocol = \WorkermanAnnotation\Protocols\HttpGateway::class;
         }
     };
-
+    if (strcasecmp('ws', $scheme) === 0 || strcasecmp('websocket', $scheme) === 0) {
+        // websocket连接初始处理
+        $onWebSocketConnect = workerConfig('server.gateway.onWebSocketConnect');
+        if (is_callable($onWebSocketConnect)) {
+            $gateway->onConnect = function (TcpConnection $connection)use ($onWebSocketConnect) {
+                $connection->onWebSocketConnect = $onWebSocketConnect;
+            };
+        }
+    }
 })();
 
 // 如果不是在根目录启动，则运行runAll方法

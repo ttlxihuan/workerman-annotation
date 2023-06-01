@@ -3,9 +3,9 @@
 /**
  * 业务处理服务启动文件
  */
-use \Workerman\Worker;
+use Workerman\Worker;
 use WorkermanAnnotation\Event;
-use \GatewayWorker\BusinessWorker;
+use GatewayWorker\BusinessWorker;
 
 require_once __DIR__ . '/../bootstrap.php';
 
