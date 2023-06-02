@@ -12,7 +12,7 @@ use GatewayWorker\Lib\Context;
 
 /**
  * @DefineUse(function=true, class=true)
- * @DefineParam(name="type", type="string", default='use') 指定缓存操作类型，仅支持：init、clean、use
+ * @DefineParam(name="init", type="bool", default=false) 指定是否初始
  */
 class SessionCache implements iAnnotation {
 
@@ -28,30 +28,22 @@ class SessionCache implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
-        $type = end($params)['type'];
+        $init = end($params)['init'];
         return [
-            function (array $call_params, Closure $next, string $name)use ($type) {
+            function (array $call_params, Closure $next, string $name)use ($init) {
                 $client_id = Context::$client_id;
-                if (empty($client_id) || !Cache::valid()) {
+                if (empty($client_id)) {
                     return $next();
                 }
                 $session = $_SESSION;
-                switch ($type) {
-                    case 'init':
-                        static::$sessions[$client_id] = [];
-                        break;
-                    case 'clean':
-                        static::$sessions[$client_id] = [];
-                        $_SESSION = [];
-                        break;
-                    case 'use':
-                    default:
-                        if (empty(static::$sessions[$client_id])) {
-                            // 取缓存
-                            static::$sessions[$client_id] = unserialize((string) Cache::get($client_id . '-session')) ?: $_SESSION ?: [];
-                        }
-                        $_SESSION = static::$sessions[$client_id];
-                        break;
+                if ($init) {
+                    static::$sessions[$client_id] = $_SESSION;
+                } else {
+                    if (empty(static::$sessions[$client_id])) {
+                        // 取缓存
+                        static::$sessions[$client_id] = unserialize((string) Cache::get($client_id . '-session')) ?: $_SESSION ?: [];
+                    }
+                    $_SESSION = static::$sessions[$client_id];
                 }
                 $result = $next();
                 if ($_SESSION) {

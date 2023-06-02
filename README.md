@@ -134,7 +134,7 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 当业务进程异常重启时能自动通过缓存恢复session数据，能有效解决高并发时session不同步的问题
 控制器中已经默认绑定好，启用只需要配置好缓存即可
 注意：网关的路由应该使用默认绑定模式，否则session会有同步时差。
-* type   用于指定session处理环节，init 初始化（强制更新为最新数据）、clean 清除、use 使用
+* init   用于指定是否初始session，初始时会保存网关送过来的session数据，非初始会依次取进程中暂存数据=>取缓存=>网关session（取到即止）
 
 ### 自定义注解
 当内置注解不够用时可以自定义注解处理器。每个注解均有对应一个处理类，这个类必需继承接口 WorkermanAnnotation\Annotations\iAnnotation 。
