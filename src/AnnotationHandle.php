@@ -213,7 +213,7 @@ class AnnotationHandle {
                 }
             }
             // 解析库中没有下级
-            if (!$this->extractParentClass($ref, $childrenRef, $uses) && $ref->isInstantiable()) {
+            if (!$this->extractParentClass($ref, $childrenRef, $uses, $data) && $ref->isInstantiable()) {
                 unset($childrenRef[$index]);
                 $this->extractClass($ref, $uses, $data);
                 $count++;
@@ -367,7 +367,7 @@ class AnnotationHandle {
             if (empty($define['instance']) || !is_object($define['instance'])) {
                 throw new Exception($this->getRefName($ref) . " 注解 $name 应用处理类无处理实例");
             }
-            $define_params = $define['params'] ?: [];
+            $define_params = $define['params'] ?? [];
             foreach ($annotations[$name] as $params) {
                 $parameters = [];
                 foreach ($define_params as $attrname => $param) {

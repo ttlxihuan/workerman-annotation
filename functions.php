@@ -22,11 +22,14 @@ function serverRun($basePath = null) {
         Environment::set('BASE_PATH', $basePath);
     }
     if (strpos(strtolower(PHP_OS), 'win') === 0) {
+        require_once __DIR__ . '/bootstrap.php';
         global $argv;
         unset($argv[0]);
         chdir(__DIR__ . '/server/');
         foreach (['register', 'gateway', 'timer', 'worker'] as $server) {
-            $argv[] = "{$server}.php";
+            if (workerConfig("server.{$server}.active", true)) {
+                $argv[] = "{$server}.php";
+            }
         }
     } else {
         // 必要扩展

@@ -28,6 +28,17 @@ class Cache {
     }
 
     /**
+     * 缓存是否有效
+     * @return bool
+     */
+    public static function valid(string $name = null) {
+        if (empty($name)) {
+            $name = workerConfig('cache.default');
+        }
+        return isset(static::$makes[$name]);
+    }
+
+    /**
      * 缓存连接
      * @param string $name
      * @return mixed

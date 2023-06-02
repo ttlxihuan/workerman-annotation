@@ -129,9 +129,12 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 * rules     验证规则
 * title     字段名，验证失败时提示用，不指定为 name
 
-#### @Log(timeout=int)
-调用超时日志记录
-* timeout   调用处理超时时长（秒）
+#### @SessionCache(type=string)
+缓存session数据，进程中会保存session数据，当session有变化时会更新到缓存中（配置缓存时有效）
+当业务进程异常重启时能自动通过缓存恢复session数据，能有效解决高并发时session不同步的问题
+控制器中已经默认绑定好，启用只需要配置好缓存即可
+注意：网关的路由应该使用默认绑定模式，否则session会有同步时差。
+* type   用于指定session处理环节，init 初始化（强制更新为最新数据）、clean 清除、use 使用
 
 ### 自定义注解
 当内置注解不够用时可以自定义注解处理器。每个注解均有对应一个处理类，这个类必需继承接口 WorkermanAnnotation\Annotations\iAnnotation 。

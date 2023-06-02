@@ -5,7 +5,6 @@
  * 定时器剥离出业务服可缓解相互影响
  */
 use Workerman\Worker;
-use WorkermanAnnotation\Event;
 use WorkermanAnnotation\AnnotationHandle;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -39,8 +38,6 @@ if (!workerConfig('server.timer.active', true)) {
         $timer->call('@', $worker->name, getTimerCount() > 0 ? $worker->id : -1);
     };
 })();
-
-Event::init();
 
 // 如果不是在根目录启动，则运行runAll方法
 if (!defined('GLOBAL_START')) {
