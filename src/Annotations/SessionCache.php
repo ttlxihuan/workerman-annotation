@@ -32,7 +32,7 @@ class SessionCache implements iAnnotation {
         return [
             function (array $call_params, Closure $next, string $name)use ($init) {
                 $client_id = Context::$client_id;
-                if (empty($client_id)) {
+                if (empty($client_id) || getRequest()) {
                     return $next();
                 }
                 $session = $_SESSION;
