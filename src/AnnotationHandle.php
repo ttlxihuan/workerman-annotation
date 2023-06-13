@@ -200,17 +200,21 @@ class AnnotationHandle {
             }
             // 提取相近的父类进行解析
             $parent = $ref->getParentClass();
-            $existParent = null;
             if ($parent->getName() != $baseRef->getName()) {
-                do {
-                    // 提取存在解析的上级
-                    $existParent = $childrenRef[$parent->getName()] ?? $existParent;
-                } while ($parent = $parent->getParentClass());
-                if ($existParent) {
-                    unset($childrenRef[$existParent->getName()]);
-                    $this->extractParentClass($existParent, $childrenRef, $uses, $data);
-                    continue;
+                $nextParent = null;
+                // 找到最根近当前父类的子类
+                while ($parent->getName() != $baseRef->getName()) {
+                    if (isset($childrenRef[$parent->getName()])) {
+                        $nextParent = $parent;
+                    }
+                    $parent = $parent->getParentClass();
                 }
+                // 如果存在中间父类，则从父类进行解析
+                if ($nextParent) {
+                    unset($childrenRef[$nextParent->getName()]);
+                    $this->extractParentClass($nextParent, $childrenRef, $uses, $data);
+                }
+                continue;
             }
             // 解析库中没有下级
             if (!$this->extractParentClass($ref, $childrenRef, $uses, $data) && $ref->isInstantiable()) {

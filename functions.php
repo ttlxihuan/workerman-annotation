@@ -27,6 +27,7 @@ function serverRun($basePath = null) {
         unset($argv[0]);
         chdir(__DIR__ . '/server/');
         foreach (['register', 'gateway', 'timer', 'worker'] as $server) {
+            // 分布时此文件启动按需使用
             if (workerConfig("server.{$server}.active", true)) {
                 $argv[] = "{$server}.php";
             }
@@ -76,22 +77,35 @@ function workerConfig(string $key = null, $default = null) {
  * @return array
  */
 function getAllRegisterAddresses() {
-    static $registerAddress = [];
+    $registerAddress = Environment::getGlobalConfig('REGISTER_ADDR');
     if (empty($registerAddress)) {
-        if (workerEnv('APP_NODE')) {
-            foreach (glob(BASE_PATH . '/env/' . workerEnv('APP_ENV') . '-*.env') as $file) {
-                foreach (Environment::iteration(basename($file, '.env')) as $key => $value) {
-                    if ($key === 'REGISTER_ADDR') {
-                        $registerAddress[] = $value;
-                    }
-                }
-            }
-            $registerAddress = array_unique($registerAddress);
-        } else {
-            $registerAddress = [workerConfig('server.register.addr')];
-        }
+        exit("未能获取到注册服地址，请核对环境配置文件。\n");
     }
     return $registerAddress;
+}
+
+/**
+ * 获取网关对外协议
+ * @return bool
+ */
+function hasGatewayProtocol(string ...$names) {
+    static $protocol = null;
+    if (empty($protocol)) {
+        $gatewayListen = Environment::getGlobalConfig('GATEWAY_LISTEN');
+        if (empty($gatewayListen)) {
+            exit("未能获取到网关对外监听地址，请核对环境配置文件。\n");
+        }
+        // 对外协议不能有多个，否则容易造成异常
+        foreach ($gatewayListen as $addr) {
+            $protocol = strtolower(parse_url($addr, PHP_URL_SCHEME));
+        }
+    }
+    foreach ($names as $name) {
+        if ($name == $protocol) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**

@@ -33,6 +33,9 @@ class WebsocketRouter implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
+        if (!hasGatewayProtocol('websocket', 'ws')) {
+            return [];
+        }
         if (!count($this->routes)) {
             $this->create($input['parse']);
         }

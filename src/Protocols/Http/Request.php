@@ -13,6 +13,7 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      * @param type $offset
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset): bool {
         return $this[$offset] !== null;
     }
@@ -22,6 +23,7 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      * @param type $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset) {
         if (in_array($this->method(), ['POST', 'PUT'], true)) {
             return $this->post($offset) ?? $this->file($offset) ?? $this->get($offset);
@@ -35,6 +37,7 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      * @param mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value): void {
         if (in_array($this->method(), ['POST', 'PUT'], true)) {
             $this->post();
@@ -50,6 +53,7 @@ class Request extends \Workerman\Protocols\Http\Request implements \ArrayAccess 
      * @param string $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset): void {
         if (in_array($this->method(), ['POST', 'PUT'], true) && isset($this[$offset])) {
             unset($this->_data['post'][$offset], $this->_data['files'][$offset]);

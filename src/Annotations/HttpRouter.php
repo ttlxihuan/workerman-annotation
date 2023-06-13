@@ -144,6 +144,7 @@ class HttpRouter implements iAnnotation {
         $parse->addCall(function (array $params)use ($parse) {
             $connection = $this->getTcpConnection();
             static::$request = $request = Http::decode($params[0], $connection);
+            $data = array_merge($request->get(), $request->post(), $request->file());
             try {
                 // 静态文件处理
                 $result = $this->requestStatic($request);
@@ -154,17 +155,20 @@ class HttpRouter implements iAnnotation {
                             $request->path()
                         ],
                         'bind-call' => 'http'
-                            ], $request);
+                            ], $data);
                 }
             } catch (\Exception $err) {
-                $result = $parse->callIndex('bind-call', 'http', $request);
+                $result = $parse->callIndex('bind-call', 'http', $data, $err);
                 if (!$err instanceof BusinessException) {
                     BusinessWorker::log('[ERROR] ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString());
                 }
             }
             static::$request = null;
             if (is_null($result)) {
-                $result = '';
+                $result = new Response(404, null, 'Not Found');
+            }
+            if (is_array($result)) {
+                $result = json_encode($result);
             }
             if (!$result instanceof Response) {
                 $result = new Response(200, [], $result);
@@ -175,7 +179,7 @@ class HttpRouter implements iAnnotation {
                     $this->sendFile($result);
                     return;
                 }
-                $result = new Response(403, null, '403 Forbidden');
+                $result = new Response(403, null, 'Forbidden');
             }
             return Http::encode($result, $connection);
         });
@@ -188,6 +192,9 @@ class HttpRouter implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
+        if (!hasGatewayProtocol('http')) {
+            return [];
+        }
         $indexs = [];
         foreach ($params as $param) {
             $indexs[$param['path']] = $param['path'];

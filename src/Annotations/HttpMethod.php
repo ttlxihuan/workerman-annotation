@@ -26,6 +26,9 @@ class HttpMethod implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
+        if (!hasGatewayProtocol('http')) {
+            return [];
+        }
         $indexs = [];
         $name = $input['ref']->getName();
         foreach ($input['indexs']['http'] ?? [''] as $before) {
