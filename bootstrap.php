@@ -22,6 +22,7 @@ defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DI
     } else {
         $env_name = "$env-$node";
     }
+    Worker::$pidFile = __DIR__ . '/' . $env_name . '.pid';
     // 加载环境配置文件
     Environment::load($env_name);
     Environment::set('APP_ENV', $env);
