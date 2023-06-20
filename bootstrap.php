@@ -4,6 +4,7 @@
  * 初始化引导处理
  */
 
+use Workerman\Worker;
 use WorkermanAnnotation\Config;
 use WorkermanAnnotation\Environment;
 
