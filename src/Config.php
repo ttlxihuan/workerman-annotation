@@ -68,10 +68,11 @@ class Config {
      */
     public static function load(string $dir) {
         if (is_dir($dir) && file_exists($dir)) {
-            $dir = realpath($dir);
-            foreach (glob($dir . '/*.php') as $file) {
-                $key = substr(str_replace($dir, '', realpath($file)), 1, -4);
-                static::set(str_replace(['\\', '/'], '.', $key), include $file);
+            foreach (scandir($dir) as $file) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
+                static::set(basename($file, '.php'), include $dir . '/' . $file);
             }
         }
     }

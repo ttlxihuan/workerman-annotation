@@ -11,7 +11,7 @@ use WorkermanAnnotation\Environment;
 // 自动加载类
 require_once __DIR__ . '/../../autoload.php';
 
-defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', realpath(__DIR__ . '/../../../')));
+defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', __DIR__ . '/../../../'));
 
 (function () {
     // 环境变量加载

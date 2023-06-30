@@ -25,7 +25,7 @@ function serverRun($basePath = null) {
         require_once __DIR__ . '/bootstrap.php';
         global $argv;
         unset($argv[0]);
-        chdir(__DIR__ . '/server/');
+        @chdir(__DIR__ . '/server/');
         foreach (['register', 'gateway', 'timer', 'worker'] as $server) {
             // 分布时此文件启动按需使用
             if (workerConfig("server.{$server}.active", true)) {
