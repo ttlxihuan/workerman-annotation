@@ -26,7 +26,7 @@ class Timer implements iAnnotation {
      */
     public function make(array $params, array $input): array {
         $parse = $input['parse'];
-        $method = $parse->getRefName($input['ref']);
+        $method = $input['method'];
         foreach ($params as $param) {
             $parse->addCall(function (array &$call_params, \Closure $next)use ($parse, $method, $param) {
                 list($name, $id) = $call_params;

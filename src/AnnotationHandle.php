@@ -265,8 +265,9 @@ class AnnotationHandle {
      * @param array $indexes
      */
     protected function extractFunction(object $object, ReflectionMethod $refMethod, array $uses = [], array $indexes = []) {
-        $name = $this->getRefName($refMethod);
-        foreach ($this->callMake($uses, $this->apply($refMethod, $uses), ['indexs' => $indexes, 'ref' => $refMethod, 'parse' => $this]) as $index => $item) {
+        $method = $refMethod->getName();
+        $name = get_class($object) . '::' . $method;
+        foreach ($this->callMake($uses, $this->apply($refMethod, $uses), ['indexs' => $indexes, 'ref' => $refMethod, 'parse' => $this, 'method' => $name]) as $index => $item) {
             if ($item instanceof \Closure) {
                 $this->callbacks[$name][] = $item;
             } else {
@@ -275,7 +276,6 @@ class AnnotationHandle {
                 }
             }
         }
-        $method = $refMethod->getName();
         $this->callbacks[$name][] = function (array $params)use ($object, $method) {
             return $object->$method(...$params);
         };
