@@ -249,11 +249,7 @@ class AnnotationHandle {
             if ($refMethod->isConstructor() || $refMethod->isDestructor() || $refMethod->isStatic()) {
                 continue;
             }
-            $name = $this->getRefName($refMethod);
-            foreach ($callbacks as $callback) {
-                $this->callbacks[$name][] = $callback;
-            }
-            $this->extractFunction($object, $refMethod, $uses, $indexes);
+            $this->extractFunction($object, $refMethod, $uses, $indexes, $callbacks);
         }
     }
 
@@ -263,10 +259,12 @@ class AnnotationHandle {
      * @param ReflectionMethod $refMethod
      * @param array $uses
      * @param array $indexes
+     * @param array $callbacks
      */
-    protected function extractFunction(object $object, ReflectionMethod $refMethod, array $uses = [], array $indexes = []) {
+    protected function extractFunction(object $object, ReflectionMethod $refMethod, array $uses, array $indexes, array $callbacks) {
         $method = $refMethod->getName();
         $name = get_class($object) . '::' . $method;
+        $this->callbacks[$name] = $callbacks;
         foreach ($this->callMake($uses, $this->apply($refMethod, $uses), ['indexs' => $indexes, 'ref' => $refMethod, 'parse' => $this, 'method' => $name]) as $index => $item) {
             if ($item instanceof \Closure) {
                 $this->callbacks[$name][] = $item;
