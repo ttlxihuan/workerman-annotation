@@ -12,7 +12,6 @@ use GatewayWorker\Lib\Context;
 
 /**
  * @DefineUse(function=true, class=true)
- * @DefineParam(name="init", type="bool", default=false) 指定是否初始
  */
 class SessionCache implements iAnnotation {
 
@@ -28,23 +27,18 @@ class SessionCache implements iAnnotation {
      * @return array
      */
     public function make(array $params, array $input): array {
-        $init = end($params)['init'];
         return [
-            function (array $call_params, Closure $next, string $name)use ($init) {
+            function (array $call_params, Closure $next, string $name) {
                 $client_id = Context::$client_id;
                 if (empty($client_id) || getRequest()) {
                     return $next();
                 }
                 $session = $_SESSION;
-                if ($init) {
-                    static::$sessions[$client_id] = $_SESSION;
-                } else {
-                    if (empty(static::$sessions[$client_id])) {
-                        // 取缓存
-                        static::$sessions[$client_id] = unserialize((string) Cache::get($client_id . '-session')) ?: $_SESSION ?: [];
-                    }
-                    $_SESSION = static::$sessions[$client_id];
+                if (empty(static::$sessions[$client_id])) {
+                    // 取缓存
+                    static::$sessions[$client_id] = unserialize((string) Cache::get($client_id . '-session')) ?: $_SESSION ?: [];
                 }
+                $_SESSION = static::$sessions[$client_id];
                 $result = $next();
                 if ($_SESSION) {
                     $now = time();
