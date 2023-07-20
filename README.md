@@ -119,11 +119,11 @@ WebSocket请求方法路由注册，指定后此方法就可以通过路由调�
 
 #### @Timer(id=int, interval=int, persistent=bool)
 定时器注解，多进程时可以绑定指定进程号上运行，方便管理各定时器，如果只有一个进程运行时进程号无效。
-* id        业务服务进程ID，<0时绑定在所有业务服务进程上，默认：0
+* id        定时器进程ID，<0时绑定在所有定时器进程上，默认：0
 * interval  定时调用间隔时长，默认：1
 * persistent 是否循环定时器，默认：true
 * basis     指定基准时间（H:i:s），用于按标准时间间隔定时处理
-* worker    指定启动业务进程名，用于多业务进程名时划分处理
+* worker    指定启动进程名，用于多进程名定时器服务划分处理
 
 #### @Validator(name=string, value=mixed, rules=string, title=string)
 验证参数注解，用来验证函数的第一个参数（必需是数组）。
