@@ -85,12 +85,12 @@ class WebsocketRouter implements iAnnotation {
                 }
             }
             RETURN_RESULT:
-            if (isset($result) && is_array($result) || $result instanceof \ArrayAccess) {
+            if (is_array($result) || $result instanceof \ArrayAccess) {
                 if (isset($route, $data[$route])) {
                     $result[$route] = $data[$route];
                     return $this->encode($format, $result);
                 }
-                Gateway::closeClient(Context::$client_id);
+                Gateway::closeClient(Context::$client_id, $this->encode($format, $result));
             }
         });
     }
