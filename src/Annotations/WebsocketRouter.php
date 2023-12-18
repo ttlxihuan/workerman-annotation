@@ -85,7 +85,7 @@ class WebsocketRouter implements iAnnotation {
                 }
             }
             RETURN_RESULT:
-            if (is_array($result) || $result instanceof \ArrayAccess) {
+            if (isset($result) && is_array($result) || $result instanceof \ArrayAccess) {
                 if (isset($route, $data[$route])) {
                     $result[$route] = $data[$route];
                     return $this->encode($format, $result);
