@@ -34,5 +34,5 @@ defined('BASE_PATH') || define('BASE_PATH', workerEnv('BASE_PATH', __DIR__ . '/.
     $logDir = BASE_PATH . '/logs';
     file_exists($logDir) || @mkdir($logDir);
     // 全局时区
-    date_default_timezone_set(workerEnv('server.timezone', 'PRC'));
+    date_default_timezone_set(workerConfig('server.timezone', 'PRC'));
 })();
