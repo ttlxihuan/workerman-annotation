@@ -165,5 +165,5 @@ function getTimerCount() {
  * 获取网关进程数
  */
 function getGatewayCount() {
-    return defined('GLOBAL_START') ? workerConfig('server.worker.count', PROCESS_NUM * 2) : 1;
+    return defined('GLOBAL_START') ? workerConfig('server.gateway.count', PROCESS_NUM * 2) : 1;
 }
